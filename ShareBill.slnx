@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ShareBill/ShareBill.csproj" />
+  <Project Path="ShareBillTests/ShareBillTests.csproj" />
+</Solution>

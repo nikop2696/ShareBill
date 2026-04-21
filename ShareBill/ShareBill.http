@@ -1,0 +1,6 @@
+@ShareBill_HostAddress = http://localhost:5170
+
+GET {{ShareBill_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
