@@ -1,5 +1,6 @@
 ﻿using Polly;
 using ShareBill.Infrastructure.Database;
+using ShareBill.Infrastructure.Policies;
 
 namespace ShareBill.Services
 
@@ -8,14 +9,14 @@ namespace ShareBill.Services
     {
         private readonly IDbConnectionFactory _dbFactory;
         private readonly ILogger<HealthService> _logger;
-        private readonly IAsyncPolicy _reconRetryPolicy;
+        private readonly IRetryPolicies _retryPolicies;
 
-        public HealthService( IDbConnectionFactory dbFactory, ILogger<HealthService> logger, IAsyncPolicy reconRetryPolicy)
+        public HealthService( IDbConnectionFactory dbFactory, ILogger<HealthService> logger, IRetryPolicies retryPolicies)
         {
 
             _dbFactory = dbFactory;
             _logger = logger;
-            _reconRetryPolicy = reconRetryPolicy;
+            _retryPolicies = retryPolicies;
         }
 
         public async Task<bool> CanReachDatabase() 
@@ -23,7 +24,7 @@ namespace ShareBill.Services
             try
             {
                 _logger.LogInformation("Checking database connectivity...");
-                return await _reconRetryPolicy.ExecuteAsync(async () =>
+                return await _retryPolicies.DBRetryPolicy.ExecuteAsync(async () =>
                 {
                     await using var connection = _dbFactory.CreateConnection();
 
@@ -31,7 +32,7 @@ namespace ShareBill.Services
 
                     await using var cmb = new Npgsql.NpgsqlCommand("SELECT 1", connection);
 
-                    var result = await cmb.ExecuteScalarAsync();
+                    await cmb.ExecuteScalarAsync();
 
                     _logger.LogInformation("Database is reachable");
 
@@ -41,6 +42,7 @@ namespace ShareBill.Services
             catch (Exception ex) 
             {
                 _logger.LogError(ex, "Database connection failed");
+
                 return false;
             }
 

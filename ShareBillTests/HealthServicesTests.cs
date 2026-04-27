@@ -30,12 +30,12 @@ namespace ShareBillTests
 
             var factory = new DbConnectionFactory(config);
 
-            var logger = new Mock<ILogger<HealthService>>();
+            var healthLogger = new Mock<ILogger<HealthService>>();
+            var policyLogger = new Mock<ILogger<RetryPolicesProvider>>();
 
-            var policy = RetryPolices.GetDBRetryPolicy();
+            var policy = new RetryPolicesProvider(policyLogger.Object);
 
-            var service = new HealthService(factory, logger.Object, policy);
-
+            var service = new HealthService(factory, healthLogger.Object, policy);
             var result = await service.CanReachDatabase();
             Assert.True(result);
             
@@ -52,10 +52,8 @@ namespace ShareBillTests
                 .Setup(x => x.CreateConnection())
                 .Throws(new NpgsqlException());
 
-
-            var policy = Policy
-                .Handle<Exception>()
-                .RetryAsync(1);
+            var policyLogger = new Mock<ILogger<RetryPolicesProvider>>();
+            var policy = new RetryPolicesProvider(policyLogger.Object);
 
             var service = new HealthService(factoryMock.Object, logger.Object, policy);
 
