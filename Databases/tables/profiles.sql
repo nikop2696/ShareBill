@@ -1,4 +1,4 @@
-create table public.users (
+create table public.profiles (
   id uuid not null,
   username text null,
   is_active boolean null default false,
