@@ -7,13 +7,14 @@ namespace ShareBill.Services
 {
     public class HealthService
     {
+     
         private readonly IDbConnectionFactory _dbFactory;
         private readonly ILogger<HealthService> _logger;
         private readonly IRetryPolicies _retryPolicies;
 
-        public HealthService( IDbConnectionFactory dbFactory, ILogger<HealthService> logger, IRetryPolicies retryPolicies)
+        public HealthService(IDbConnectionFactory dbFactory, ILogger<HealthService> logger, IRetryPolicies retryPolicies)
         {
-
+            
             _dbFactory = dbFactory;
             _logger = logger;
             _retryPolicies = retryPolicies;

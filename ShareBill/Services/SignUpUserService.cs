@@ -24,7 +24,17 @@ namespace ShareBill.Services
         {
             try
             {
+
                 _logger.LogInformation("Attempting to sign up user with email: {Email}", request.Email);
+
+                _logger.LogInformation("Validating Username");
+
+                var isAvaiable = await IsUsernameAvailable(request.UserName);
+
+                if (!isAvaiable) 
+                {
+                    throw new ArgumentException("Username already in use");
+                }
 
                 var signUpResponse = await CreateAuthUserAsync(request.Email, request.Password);
 
@@ -61,6 +71,24 @@ namespace ShareBill.Services
 
         }
 
+        private async Task<bool> IsUsernameAvailable(string username)
+        {
+            try
+            {
+                var response = await _supaBaseService
+                                    .From<Profile>()
+                                    .Where(p => p.UserName == username)
+                                    .Get();
+
+                return !response.Models?.Any() ?? true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
+        }
+
         private async Task<AuthResponse> CreateAuthUserAsync(string email, string password)
         {
             try
@@ -82,6 +110,7 @@ namespace ShareBill.Services
                 return new AuthResponse { Success = false, Message = "Exception occurred while signing up user." };
             }
         }
+
 
         private async Task<UserResponse> InsertUserName(Guid userId, string userName)
         {
