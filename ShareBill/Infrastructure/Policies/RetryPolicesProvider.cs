@@ -17,11 +17,11 @@ namespace ShareBill.Infrastructure.Policies
         {
             _logger = logger;
         }
-        public IAsyncPolicy GoTrueRetryPolicy => GetGoTrueRetryPolicy(_logger);
+        public IAsyncPolicy SignUpRetryPolicy => GetSignUpRetryPolicy(_logger);
         public  IAsyncPolicy DBRetryPolicy => GetDBRetryPolicy();
-        public  IAsyncPolicy<OperationResult<UserResponse>> SignUpRetryPolicy => GetSignUpRetryPolicy(_logger);
+        public  IAsyncPolicy<OperationResult<UserResponse>> UsernameRetryPolicy => GetUsernameRetryPolicy(_logger);
         
-        public static IAsyncPolicy GetGoTrueRetryPolicy(ILogger logger)
+        public static IAsyncPolicy GetSignUpRetryPolicy(ILogger logger)
         {
             return Policy
                 .Handle<GotrueException>(ex => ex.ExtractErrorCode().IsRetryable)
@@ -50,7 +50,7 @@ namespace ShareBill.Infrastructure.Policies
                     );
         }
 
-        public static AsyncRetryPolicy<OperationResult<UserResponse>> GetSignUpRetryPolicy(ILogger logger) 
+        public static AsyncRetryPolicy<OperationResult<UserResponse>> GetUsernameRetryPolicy(ILogger logger) 
         {
             return Policy
                 .Handle<InvalidOperationException>()

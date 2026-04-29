@@ -5,9 +5,9 @@ namespace ShareBill.Infrastructure.Policies
 {
     public interface IRetryPolicies
     {
-        IAsyncPolicy GoTrueRetryPolicy { get; }
+        IAsyncPolicy SignUpRetryPolicy { get; }
         IAsyncPolicy DBRetryPolicy { get; }
-        IAsyncPolicy<OperationResult<UserResponse>> SignUpRetryPolicy { get; }
+        IAsyncPolicy<OperationResult<UserResponse>> UsernameRetryPolicy { get; }
 
     }
 }

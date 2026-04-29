@@ -96,7 +96,7 @@ namespace ShareBill.Services
         {
             try
             {
-                return await _retryPolicies.GoTrueRetryPolicy.ExecuteAsync(async () =>
+                return await _retryPolicies.SignUpRetryPolicy.ExecuteAsync(async () =>
                 {
                     var authSupaBaseResponse = await _supaBaseService.Auth.SignUp(email, password);
 
@@ -128,7 +128,7 @@ namespace ShareBill.Services
         {
             try
             {
-                return await _retryPolicies.SignUpRetryPolicy.ExecuteAsync(async () =>
+                return await _retryPolicies.UsernameRetryPolicy.ExecuteAsync(async () =>
                 {
 
                     var userUpdatetResponse = await _supaBaseService
