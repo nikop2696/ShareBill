@@ -1,0 +1,7 @@
+﻿namespace ShareBill.Errors.ResponsesError
+{
+    public class ResponseAppErrorInfo : AppErrorInfo
+    {
+        public int HttpStatusCode { get; set; }
+    }
+}

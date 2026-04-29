@@ -3,24 +3,26 @@ using Polly.Retry;
 using ShareBill.Domain.Entities;
 using ShareBill.DTOs;
 using ShareBill.DTOs.Responses;
+using ShareBill.Errors.AuthErrors;
 using ShareBill.Infrastructure.Policies;
 using Supabase;
+using Supabase.Gotrue.Exceptions;
 
 namespace ShareBill.Services
 {
     public class SignUpUserService
     {
         private readonly Client _supaBaseService;
-        private readonly ILogger<SignUpUserService> _logger;
+        private readonly ILogger<OperationResult<SignUpUserService>> _logger;
         private readonly IRetryPolicies _retryPolicies;
 
-        public SignUpUserService(Client supaBaseService, ILogger<SignUpUserService> logger, IRetryPolicies retryPolicies)
+        public SignUpUserService(Client supaBaseService, ILogger<OperationResult<SignUpUserService>> logger, IRetryPolicies retryPolicies)
         {
             _supaBaseService = supaBaseService;
             _logger = logger;
             _retryPolicies = retryPolicies;
         }
-        public async Task<SignUpResponse> RegisterUserAsync(UserSignUpRequest request)
+        public async Task<OperationResult<SignUpResponse>> RegisterUserAsync(UserSignUpRequest request)
         {
             try
             {
@@ -45,7 +47,7 @@ namespace ShareBill.Services
                     throw new Exception("Failed to sign up user.");
                 }
 
-                var userId = signUpResponse.UserID;
+                var userId = signUpResponse.Data.UserID;
 
                 _logger.LogInformation("User signed up successfully with email: {Email}", request.Email);
 
@@ -59,13 +61,14 @@ namespace ShareBill.Services
 
                     throw new Exception("Failed to create user profile.");
                 }
-                return new SignUpResponse { Success = true, Message = "User signed up and profile created successfully." };
+                return new OperationResult<SignUpResponse> { Success = true, Message = "User signed up and profile created successfully." };
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception occurred during user sign up process for email: {Email}", request.Email);
-                return new SignUpResponse { Success = false, Message = $"Exception occurred during user sign up process. Error: {ex.Message}" };
+
+                return new OperationResult<SignUpResponse> { Success = false, Message = $"Exception occurred during user sign up process. Error: {ex.Message}" };
             }
 
 
@@ -89,30 +92,39 @@ namespace ShareBill.Services
             
         }
 
-        private async Task<AuthResponse> CreateAuthUserAsync(string email, string password)
+        private async Task<OperationResult<AuthResponse>> CreateAuthUserAsync(string email, string password)
         {
             try
             {
-                var authSupaBaseResponse = await _supaBaseService.Auth.SignUp(email, password);
-
-                if (authSupaBaseResponse == null || authSupaBaseResponse.User == null || string.IsNullOrWhiteSpace(authSupaBaseResponse.User.Id))
+                return await _retryPolicies.GoTrueRetryPolicy.ExecuteAsync(async () =>
                 {
-                    _logger.LogError("Failed to sign up user with email: {Email}", email);
-                    return new AuthResponse { Success = false, Message = "Failed to sign up user." };
-                }
-                _logger.LogInformation("User signed up successfully with email: {Email}", email);
+                    var authSupaBaseResponse = await _supaBaseService.Auth.SignUp(email, password);
 
-                return new AuthResponse { Success = true, Message = "User signed up successfully.", UserID = Guid.Parse(authSupaBaseResponse.User.Id) };
+                    if (authSupaBaseResponse == null || authSupaBaseResponse.User == null || string.IsNullOrWhiteSpace(authSupaBaseResponse.User.Id))
+                    {
+                        _logger.LogError("Failed to sign up user with email: {Email}", email);
+                        return new OperationResult<AuthResponse> { Success = false, Message = "Failed to sign up user." };
+                    }
+                    _logger.LogInformation("User signed up successfully with email: {Email}", email);
+
+                    return new OperationResult<AuthResponse> { Success = true, Message = "User signed up successfully.", Data = new AuthResponse { UserID = Guid.Parse(authSupaBaseResponse.User.Id) } };
+                });
+            }
+            catch (GotrueException gotrueEx)
+            {
+                var error = gotrueEx.ExtractErrorCode();
+                _logger.LogError(gotrueEx, "GotrueException occurred while signing up user with email: {Email}. Error Code: {ErrorCode}. Error Message : {ErrorMessage}", email, error.Code, error.Description);
+                return new OperationResult<AuthResponse> { Success = false, Message = $"GotrueException occurred while signing up user. Error Code: {error.Code}, Error Message: {error.Description}" };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Exception occurred while signing up user with email: {Email}", email);
-                return new AuthResponse { Success = false, Message = "Exception occurred while signing up user." };
+                return new OperationResult<AuthResponse> { Success = false, Message = "Exception occurred while signing up user." };
             }
         }
 
 
-        private async Task<UserResponse> InsertUserName(Guid userId, string userName)
+        private async Task<OperationResult<UserResponse>> InsertUserName(Guid userId, string userName)
         {
             try
             {
@@ -130,7 +142,7 @@ namespace ShareBill.Services
                         throw new InvalidOperationException("Profile update failed. No records were updated.");
                     }
 
-                    return new UserResponse { Success = true, Message = "Username updated successfully." };
+                    return new OperationResult<UserResponse> { Success = true, Message = "Username updated successfully." };
                 });
             }
 
@@ -138,7 +150,7 @@ namespace ShareBill.Services
             {
                 _logger.LogError(ex, "Exception occurred while updating username for user with ID: {UserId}", userId);
 
-                return new UserResponse { Success = false, Message = $"Exception occurred while updating username. Error: {ex.Message}" };
+                return new OperationResult<UserResponse> { Success = false, Message = $"Exception occurred while updating username. Error: {ex.Message}" };
             }
 
 
