@@ -35,7 +35,7 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user's email address has not been confirmed.",
                     MessageToShow = "Please confirm your email address before trying to log in.",
                     IsRetryable = false,
-                    HttpStatusCode = 0
+                    HttpStatusCode = 400
                 },
                 ["UserBadMultiple"] = new()
                 {
@@ -44,7 +44,7 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user's email address and password are invalid.",
                     MessageToShow = "The email address or password you entered is incorrect. Please try again.",
                     IsRetryable = false,
-                    HttpStatusCode = 0
+                    HttpStatusCode = 422
                 },
                 ["UserBadPassword"] = new()
                 {
@@ -53,7 +53,7 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user's password is invalid.",
                     MessageToShow = "The password you entered is incorrect. Please try again.",
                     IsRetryable = false,
-                    HttpStatusCode = 0
+                    HttpStatusCode = 422
                 },
                 ["UserBadLogin"] = new()
                 {
@@ -62,7 +62,7 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user's login is invalid.",
                     MessageToShow = "The login information you entered is incorrect. Please try again.",
                     IsRetryable = false,
-                    HttpStatusCode = 0
+                    HttpStatusCode = 400
                 },
                 ["UserBadEmailAddress"] = new()
                 {
@@ -71,7 +71,7 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user's email address is invalid.",
                     MessageToShow = "The email address you entered is invalid. Please check the format and try again.",
                     IsRetryable = false,
-                    HttpStatusCode = 0
+                    HttpStatusCode = 422
                 },
                  ["UserTooManyRequests"] = new()
                 {
@@ -80,7 +80,7 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "Server rejected due to number of requests",
                     MessageToShow = "Too many attempts. Please wait a moment before trying again.",
                     IsRetryable = false,
-                     HttpStatusCode = 0
+                     HttpStatusCode = 429
                  },
                  ["UserAlreadyRegistred"] = new() 
                  {
@@ -89,7 +89,7 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user is already registered.",
                     MessageToShow = "A user with this email address already exists. Please sign up with a different email address.",
                     IsRetryable = false,
-                     HttpStatusCode = 0
+                     HttpStatusCode = 422
                  }
 
             };

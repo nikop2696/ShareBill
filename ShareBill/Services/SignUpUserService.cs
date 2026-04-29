@@ -1,7 +1,7 @@
 ﻿using Polly;
 using Polly.Retry;
 using ShareBill.Domain.Entities;
-using ShareBill.DTOs;
+using ShareBill.DTOs.Requests;
 using ShareBill.DTOs.Responses;
 using ShareBill.Errors.AuthErrors;
 using ShareBill.Infrastructure.Policies;
@@ -83,7 +83,7 @@ namespace ShareBill.Services
                                     .Where(p => p.UserName == username)
                                     .Get();
 
-                return !response.Models?.Any() ?? true;
+                return !(response.Models.Count > 0);
             }
             catch (Exception)
             {

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace ShareBill.DTOs
+namespace ShareBill.DTOs.Requests
 {
     public class UserSignUpRequest
     {

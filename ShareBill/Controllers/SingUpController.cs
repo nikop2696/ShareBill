@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using ShareBill.DTOs.Requests;
 using ShareBill.DTOs.Responses;
 using ShareBill.Services;
 
@@ -18,14 +19,14 @@ namespace ShareBill.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignUp([FromBody] DTOs.UserSignUpRequest request)
+        public async Task<IActionResult> SignUp([FromBody] UserSignUpRequest request)
         {
             var result = await _signUpUserService.RegisterUserAsync(request);
             if (!result.Success)
             {
-                return BadRequest(new BaseResponse { Success = false, Message = result.Message });
+                return BadRequest(new OperationResult<SignUpResponse> { Success = false, Message = result.Message });
             }
-            return Ok(new BaseResponse { Success = true, Message = result.Message });
+            return Ok(new OperationResult<SignUpResponse> { Success = true, Message = result.Message });
         }
     }
 }

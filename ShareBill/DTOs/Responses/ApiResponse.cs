@@ -1,10 +1,11 @@
-﻿using ShareBill.Errors;
+﻿using Microsoft.AspNetCore.Mvc;
+using ShareBill.Errors;
 using ShareBill.Errors.ResponsesError;
 
 namespace ShareBill.DTOs.Responses
 {
 
-    public class OperationResult<T>
+    public class OperationResult<T> 
     {
         public bool Success { get; init; }
         public T? Data { get; init; }
