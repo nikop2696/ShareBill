@@ -18,7 +18,8 @@ namespace ShareBill.Errors.AuthErrors
                     Type = ErrorType.Unknown,
                     Description = "The reason for the error could not be determined.",
                     IsRetryable = false,
-                    HttpStatusCode = 0
+                    HttpStatusCode = 0,
+                    Severity = ErrorSeverity.Medium
                 },
                 ["Offline"] = new()
                 {
@@ -26,7 +27,9 @@ namespace ShareBill.Errors.AuthErrors
                     Type = ErrorType.Network,
                     Description = "The client is set to run offline or the network is unavailable.",
                     IsRetryable = true,
-                    HttpStatusCode = 0
+                    HttpStatusCode = 0,
+                    Severity= ErrorSeverity.Medium
+
                 },
                 ["UserEmailNotConfirmed"] = new()
                 {
@@ -35,7 +38,8 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user's email address has not been confirmed.",
                     MessageToShow = "Please confirm your email address before trying to log in.",
                     IsRetryable = false,
-                    HttpStatusCode = 400
+                    HttpStatusCode = 400,
+                    Severity = ErrorSeverity.Medium
                 },
                 ["UserBadMultiple"] = new()
                 {
@@ -44,7 +48,8 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user's email address and password are invalid.",
                     MessageToShow = "The email address or password you entered is incorrect. Please try again.",
                     IsRetryable = false,
-                    HttpStatusCode = 422
+                    HttpStatusCode = 422,
+                    Severity = ErrorSeverity.Medium
                 },
                 ["UserBadPassword"] = new()
                 {
@@ -53,7 +58,8 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user's password is invalid.",
                     MessageToShow = "The password you entered is incorrect. Please try again.",
                     IsRetryable = false,
-                    HttpStatusCode = 422
+                    HttpStatusCode = 422,
+                    Severity = ErrorSeverity.Medium
                 },
                 ["UserBadLogin"] = new()
                 {
@@ -62,7 +68,8 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user's login is invalid.",
                     MessageToShow = "The login information you entered is incorrect. Please try again.",
                     IsRetryable = false,
-                    HttpStatusCode = 400
+                    HttpStatusCode = 400,
+                    Severity = ErrorSeverity.Medium
                 },
                 ["UserBadEmailAddress"] = new()
                 {
@@ -71,7 +78,8 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user's email address is invalid.",
                     MessageToShow = "The email address you entered is invalid. Please check the format and try again.",
                     IsRetryable = false,
-                    HttpStatusCode = 422
+                    HttpStatusCode = 422,
+                    Severity = ErrorSeverity.Medium
                 },
                  ["UserTooManyRequests"] = new()
                 {
@@ -80,7 +88,8 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "Server rejected due to number of requests",
                     MessageToShow = "Too many attempts. Please wait a moment before trying again.",
                     IsRetryable = false,
-                     HttpStatusCode = 429
+                     HttpStatusCode = 429,
+                     Severity = ErrorSeverity.Medium
                  },
                  ["UserAlreadyRegistred"] = new() 
                  {
@@ -89,7 +98,8 @@ namespace ShareBill.Errors.AuthErrors
                     Description = "The user is already registered.",
                     MessageToShow = "A user with this email address already exists. Please sign up with a different email address.",
                     IsRetryable = false,
-                     HttpStatusCode = 422
+                     HttpStatusCode = 422,
+                     Severity = ErrorSeverity.Medium
                  }
 
             };

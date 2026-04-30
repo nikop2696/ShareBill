@@ -18,13 +18,5 @@
             HttpStatusCode
         };
 
-        /// <summary>
-        /// Provides additional information about the current HTTP status code for diagnostic or logging purposes.
-        /// </summary>
-        /// <returns>A string containing the HTTP status code in a formatted representation.</returns>
-        protected override string AdditionalInfo()
-        {
-            return $"HttpStatusCode: {HttpStatusCode}";
-        }
     }
 }

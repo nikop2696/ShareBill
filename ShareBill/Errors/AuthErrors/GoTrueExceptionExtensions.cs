@@ -5,7 +5,7 @@ namespace ShareBill.Errors.AuthErrors
 {
     public static class GoTrueExceptionExtensions
     {
-        public static AppErrorInfo ExtractErrorCode(this Supabase.Gotrue.Exceptions.GotrueException goTrueEx)
+        public static AuthAppErrorInfo ExtractErrorCode(this Supabase.Gotrue.Exceptions.GotrueException goTrueEx)
         {
             try
             {

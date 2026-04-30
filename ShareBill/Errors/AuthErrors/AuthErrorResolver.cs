@@ -4,7 +4,7 @@ namespace ShareBill.Errors.AuthErrors
 {
     public static class AuthErrorResolver
     {
-        public static AppErrorInfo Resolve(string errorCode)
+        public static AuthAppErrorInfo Resolve(string errorCode)
         {
             if (string.IsNullOrWhiteSpace(errorCode))
             {
@@ -12,7 +12,15 @@ namespace ShareBill.Errors.AuthErrors
             }
             if (SupabaseAuthErrors.ErrorMap.TryGetValue(errorCode, out var errorInfo))
             {
-                return errorInfo;
+                return new AuthAppErrorInfo
+                {
+                    Code = errorInfo.Code,
+                    Description = errorInfo.Description,
+                    Type = errorInfo.Type,
+                    IsRetryable = errorInfo.IsRetryable,
+                    HttpStatusCode = errorInfo.HttpStatusCode,
+                    Severity = errorInfo.Severity
+                };
             }
             // Return a default error info for unknown errors
             return Uknown();
@@ -24,7 +32,8 @@ namespace ShareBill.Errors.AuthErrors
             Description = "An unknown authentication error occurred.",
             Type = ErrorType.Unknown,
             IsRetryable = false,
-            HttpStatusCode = 0
+            HttpStatusCode = 0,
+            Severity = ErrorSeverity.Medium
         };
         public static AuthAppErrorInfo FromException(Exception ex)
         {
@@ -34,7 +43,8 @@ namespace ShareBill.Errors.AuthErrors
                 Description = $"An unhandled exception occurred. Ex: {ex.GetFullExceptionMessage()}",
                 Type = ErrorType.Unknown,
                 IsRetryable = false,
-                HttpStatusCode = 0
+                HttpStatusCode = 0,
+                Severity = ErrorSeverity.Medium
             };
 
 

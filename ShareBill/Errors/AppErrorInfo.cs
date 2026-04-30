@@ -8,7 +8,7 @@ namespace ShareBill.Errors
         public required string Description { get; set; }
         public string MessageToShow { get; set; } = string.Empty;
         public required ErrorType Type { get; set; }
-        // public ErrorSeverity Severity { get; set; }
+        public required ErrorSeverity Severity { get; set; }
         public required bool IsRetryable { get; set; }
 
 
@@ -27,30 +27,6 @@ namespace ShareBill.Errors
             Description
         };
         
-
-        protected virtual string AdditionalInfo() => string.Empty;
-        /// <summary>
-        /// Lets you get a string representation of the error, including code, type, description, and any additional info provided by derived classes.
-        /// This can be useful for simple logging or debugging purposes.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            StringBuilder sb = new();
-            sb.Append($"Code: {Code}, Type: {Type}");
-
-            var additionainfo = AdditionalInfo();
-
-            if (!string.IsNullOrWhiteSpace(additionainfo)) 
-            {
-                sb.Append($", {additionainfo}");
-            }
-            
-            sb.Append($", isRetryable: {IsRetryable}");
-            sb.AppendLine($"Description:");
-            sb.AppendLine(Description);
-            return sb.ToString();
-        }
     }
 
 
@@ -64,14 +40,17 @@ namespace ShareBill.Errors
         Server,
         Client,
         Validation,
-        Unknown
+        Unknown,
+        Security,
+        IO,
+        Timeout
     }
 
-    /*public enum ErrorSeverity
+    public enum ErrorSeverity
     {
         Low,
         Medium,
         High,
         Critical
-    }*/
+    }
 }
