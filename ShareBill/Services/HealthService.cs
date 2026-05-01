@@ -1,4 +1,5 @@
 ﻿using Polly;
+using ShareBill.DTOs.Responses;
 using ShareBill.Errors;
 using ShareBill.Infrastructure.Database;
 using ShareBill.Infrastructure.Policies;
@@ -21,7 +22,7 @@ namespace ShareBill.Services
             _retryPolicies = retryPolicies;
         }
 
-        public async Task<bool> CanReachDatabase() 
+        public async Task<OperationResult<bool>> CanReachDatabase() 
         {
             try
             {
@@ -38,7 +39,7 @@ namespace ShareBill.Services
 
                     _logger.LogInformation("Database is reachable");
 
-                    return true;
+                    return OperationResult<bool>.Ok(true, "Database is reachable");
                 });
             }
             catch (Exception ex) 
@@ -46,7 +47,7 @@ namespace ShareBill.Services
                 var(level, payload) = ex.ToLog();
                 _logger.Log(level, ex, "Database connection failed. {@Payload}", payload);
 
-                return false;
+                return OperationResult<bool>.Fail("Database connection failed");
             }
 
             
