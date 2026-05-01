@@ -11,7 +11,7 @@ namespace ShareBill.Errors.GenericError
                 return Uknown();
             }
 
-            var key = ex.GetType().Name;
+            var key = ex.GetType().FullName ?? ex.GetType().Name;
             if (key != null && ExceptionGenericErrors.ErrorMap.TryGetValue(key, out var errorInfo))
             {
                 return new AppErrorInfo
@@ -25,7 +25,7 @@ namespace ShareBill.Errors.GenericError
             }
             return new()
             {
-                Code = key,
+                Code = "unknown_error",
                 Description = ex.Message,
                 Type = ErrorType.Server,
                 IsRetryable = false,

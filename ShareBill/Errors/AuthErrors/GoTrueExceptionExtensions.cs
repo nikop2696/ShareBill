@@ -14,7 +14,7 @@ namespace ShareBill.Errors.AuthErrors
             catch (Exception ex)
             {
 
-                return AuthErrorResolver.FromException(ex);
+                return AuthErrorResolver.FromException(new Exception("Failed to extract GoTrue error code.", ex));
             }
         }
     }

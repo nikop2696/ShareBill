@@ -3,6 +3,7 @@ using Polly.Retry;
 using ShareBill.Domain.Entities;
 using ShareBill.DTOs.Requests;
 using ShareBill.DTOs.Responses;
+using ShareBill.Errors;
 using ShareBill.Errors.AuthErrors;
 using ShareBill.Infrastructure.Policies;
 using Supabase;
@@ -22,53 +23,58 @@ namespace ShareBill.Services
             _logger = logger;
             _retryPolicies = retryPolicies;
         }
+
         public async Task<OperationResult<SignUpResponse>> RegisterUserAsync(UserSignUpRequest request)
         {
             try
             {
-
                 _logger.LogInformation("Attempting to sign up user with email: {Email}", request.Email);
-
                 _logger.LogInformation("Validating Username");
 
                 var isAvaiable = await IsUsernameAvailable(request.UserName);
 
-                if (!isAvaiable) 
-                {
-                    throw new ArgumentException("Username already in use");
+                if (!isAvaiable)
+                { 
+                    _logger.LogWarning("Username: {UserName} is already taken.", request.UserName);
+                    return OperationResult<SignUpResponse>.Fail("Username is already taken.", "UserAlreadyInUse");
                 }
 
                 var signUpResponse = await CreateAuthUserAsync(request.Email, request.Password);
 
-                if (signUpResponse == null || !signUpResponse.Success)
+                if (!signUpResponse.Success)
                 {
-                    _logger.LogError("Failed to sign up user with email: {Email}", request.Email);
+                    _logger.LogError(
+                        "Failed to sign up user with email: {Email}. ErrorCode: {ErrorCode} - {Message}",
+                        request.Email, signUpResponse.ErrorCode, signUpResponse.Message);
 
-                    throw new Exception("Failed to sign up user.");
+                    return OperationResult<SignUpResponse>.Fail(signUpResponse.Message, signUpResponse.ErrorCode);
                 }
 
-                var userId = signUpResponse.Data.UserID;
+                var userId = signUpResponse.Data!.UserID;
 
                 _logger.LogInformation("User signed up successfully with email: {Email}", request.Email);
-
                 _logger.LogInformation("Attempting to create users value for Username: {UserName}", request.UserName);
 
                 var usernameUpdateResponse = await InsertUserName(userId, request.UserName);
 
-                if (usernameUpdateResponse == null || !usernameUpdateResponse.Success)
+                if (!usernameUpdateResponse.Success)
                 {
-                    _logger.LogError("Failed to create user profile for user with email: {Email}", request.Email);
+                    _logger.LogError(
+                        "Failed to create user profile for user with email: {Email}. ErrorCode: {ErrorCode} - {Message}",
+                        request.Email, usernameUpdateResponse.ErrorCode, usernameUpdateResponse.Message);
 
-                    throw new Exception("Failed to create user profile.");
+                    return OperationResult<SignUpResponse>.Fail(usernameUpdateResponse.Message, usernameUpdateResponse.ErrorCode);
                 }
-                return new OperationResult<SignUpResponse> { Success = true, Message = "User signed up and profile created successfully." };
+                return OperationResult<SignUpResponse>.Ok(new SignUpResponse(), "User signed up and profile created successfully.");
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception occurred during user sign up process for email: {Email}", request.Email);
+                var (level,paylod) = ex.ToLog();
+                _logger.Log(level,ex, "Exception occurred while signing up user with email: {Email}. {@Payload}", request.Email, paylod);
+                
 
-                return new OperationResult<SignUpResponse> { Success = false, Message = $"Exception occurred during user sign up process. Error: {ex.Message}" };
+                return OperationResult<SignUpResponse>.Fail(ex);
             }
 
 
@@ -76,19 +82,14 @@ namespace ShareBill.Services
 
         private async Task<bool> IsUsernameAvailable(string username)
         {
-            try
-            {
-                var response = await _supaBaseService
-                                    .From<Profile>()
-                                    .Where(p => p.UserName == username)
-                                    .Get();
 
-                return !(response.Models.Count > 0);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var response = await _supaBaseService
+                                .From<Profile>()
+                                .Where(p => p.UserName == username)
+                                .Get();
+        
+            return !(response.Models.Count > 0);
+
             
         }
 
@@ -103,23 +104,26 @@ namespace ShareBill.Services
                     if (authSupaBaseResponse == null || authSupaBaseResponse.User == null || string.IsNullOrWhiteSpace(authSupaBaseResponse.User.Id))
                     {
                         _logger.LogError("Failed to sign up user with email: {Email}", email);
-                        return new OperationResult<AuthResponse> { Success = false, Message = "Failed to sign up user." };
+                        return OperationResult<AuthResponse>.Fail("Failed to sign up user.");
                     }
                     _logger.LogInformation("User signed up successfully with email: {Email}", email);
 
-                    return new OperationResult<AuthResponse> { Success = true, Message = "User signed up successfully.", Data = new AuthResponse { UserID = Guid.Parse(authSupaBaseResponse.User.Id) } };
+                    return OperationResult<AuthResponse>.Ok(new AuthResponse { UserID = Guid.Parse(authSupaBaseResponse.User.Id)}, "User signUp successfully");
                 });
             }
             catch (GotrueException gotrueEx)
             {
+                var (level, payload) = gotrueEx.ToLog();
                 var error = gotrueEx.ExtractErrorCode();
-                _logger.LogError(gotrueEx, "GotrueException occurred while signing up user with email: {Email}. Error Code: {ErrorCode}. Error Message : {ErrorMessage}", email, error.Code, error.Description);
-                return new OperationResult<AuthResponse> { Success = false, Message = $"GotrueException occurred while signing up user. Error Code: {error.Code}, Error Message: {error.Description}" };
+                _logger.Log(level, gotrueEx, "Exception occurred while signing up user with email: {Email}. {@Payload}", email, payload);
+               
+                return OperationResult<AuthResponse>.Fail(error);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception occurred while signing up user with email: {Email}", email);
-                return new OperationResult<AuthResponse> { Success = false, Message = "Exception occurred while signing up user." };
+                var(level, payload) = ex.ToLog();
+                _logger.Log(level, ex, "Exception occurred while signing up user with email: {Email}. {@Payload}", email, payload);
+                return OperationResult<AuthResponse>.Fail(ex);
             }
         }
 
@@ -134,23 +138,25 @@ namespace ShareBill.Services
                     var userUpdatetResponse = await _supaBaseService
                     .From<Profile>()
                     .Where(p => p.Id == userId)
-                    .Set(p => p.UserName, userName)
+                    .Set(p => p.UserName!, userName)
                     .Update();
 
                     if (userUpdatetResponse == null || userUpdatetResponse.Models.Count == 0)
                     {
-                        throw new InvalidOperationException("Profile update failed. No records were updated.");
+                        _logger.LogError("Failed to update username for user with ID: {UserId}", userId);
+                        return OperationResult<UserResponse>.Fail("Failed to update username.");
                     }
 
-                    return new OperationResult<UserResponse> { Success = true, Message = "Username updated successfully." };
+                    return OperationResult<UserResponse>.Ok(new UserResponse { UserID = userId, UserName = userName }, "Username updated successfully.");
                 });
             }
 
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception occurred while updating username for user with ID: {UserId}", userId);
+                var(level, payload) = ex.ToLog();
+                _logger.Log(level, ex, "Exception occurred while updating username for user with ID: {UserId}. {@Payload}", userId, payload);
 
-                return new OperationResult<UserResponse> { Success = false, Message = $"Exception occurred while updating username. Error: {ex.Message}" };
+                return OperationResult<UserResponse>.Fail(ex);
             }
 
 

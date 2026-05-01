@@ -1,4 +1,5 @@
 ﻿using Polly;
+using ShareBill.Errors;
 using ShareBill.Infrastructure.Database;
 using ShareBill.Infrastructure.Policies;
 
@@ -42,7 +43,8 @@ namespace ShareBill.Services
             }
             catch (Exception ex) 
             {
-                _logger.LogError(ex, "Database connection failed");
+                var(level, payload) = ex.ToLog();
+                _logger.Log(level, ex, "Database connection failed. {@Payload}", payload);
 
                 return false;
             }
