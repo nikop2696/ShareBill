@@ -11,6 +11,8 @@ using ShareBill.Infrastructure.DI;
 using ShareBill.Infrastructure.Policies;
 using ShareBill.LoggerConfigurators;
 using ShareBill.Services;
+using FluentValidation;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +44,8 @@ builder.Services.AddScoped<SignUpUserService>();
 builder.Services.AddSingleton<IRetryPolicies, RetryPolicesProvider>();
 
 builder.Services.AddSingleton(ConfiguredLogger.BaseLogger());
+
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 
 

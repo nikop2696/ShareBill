@@ -49,7 +49,8 @@ namespace ShareBill.DTOs.Responses
             {
                 Success = false,
                 ErrorCode = errorInfo.Code,
-                IsRetryable = errorInfo.IsRetryable
+                IsRetryable = errorInfo.IsRetryable,
+                Message = errorInfo.Description
             };
 
     }
