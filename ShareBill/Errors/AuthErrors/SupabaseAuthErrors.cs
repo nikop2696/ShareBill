@@ -36,7 +36,6 @@ namespace ShareBill.Errors.AuthErrors
                     Code = "UserEmailNotConfirmed",
                     Type = ErrorType.Validation,
                     Description = "The user's email address has not been confirmed.",
-                    MessageToShow = "Please confirm your email address before trying to log in.",
                     IsRetryable = false,
                     HttpStatusCode = 400,
                     Severity = ErrorSeverity.Medium
@@ -46,7 +45,6 @@ namespace ShareBill.Errors.AuthErrors
                     Code = "UserBadMultiple",
                     Type = ErrorType.Validation,
                     Description = "The user's email address and password are invalid.",
-                    MessageToShow = "The email address or password you entered is incorrect. Please try again.",
                     IsRetryable = false,
                     HttpStatusCode = 422,
                     Severity = ErrorSeverity.Medium
@@ -56,7 +54,6 @@ namespace ShareBill.Errors.AuthErrors
                     Code = "UserBadPassword",
                     Type = ErrorType.Validation,
                     Description = "The user's password is invalid.",
-                    MessageToShow = "The password you entered is incorrect. Please try again.",
                     IsRetryable = false,
                     HttpStatusCode = 422,
                     Severity = ErrorSeverity.Medium
@@ -66,7 +63,6 @@ namespace ShareBill.Errors.AuthErrors
                     Code = "UserBadLogin",
                     Type = ErrorType.Validation,
                     Description = "The user's login is invalid.",
-                    MessageToShow = "The login information you entered is incorrect. Please try again.",
                     IsRetryable = false,
                     HttpStatusCode = 400,
                     Severity = ErrorSeverity.Medium
@@ -76,7 +72,6 @@ namespace ShareBill.Errors.AuthErrors
                     Code = "UserBadEmailAddress",
                     Type = ErrorType.Validation,
                     Description = "The user's email address is invalid.",
-                    MessageToShow = "The email address you entered is invalid. Please check the format and try again.",
                     IsRetryable = false,
                     HttpStatusCode = 422,
                     Severity = ErrorSeverity.Medium
@@ -86,7 +81,6 @@ namespace ShareBill.Errors.AuthErrors
                     Code = "UserTooManyRequests",
                     Type = ErrorType.Network,
                     Description = "Server rejected due to number of requests",
-                    MessageToShow = "Too many attempts. Please wait a moment before trying again.",
                     IsRetryable = false,
                      HttpStatusCode = 429,
                      Severity = ErrorSeverity.Medium
@@ -96,7 +90,6 @@ namespace ShareBill.Errors.AuthErrors
                     Code = "UserAlreadyRegistred",
                     Type = ErrorType.Validation,
                     Description = "The user is already registered.",
-                    MessageToShow = "A user with this email address already exists. Please sign up with a different email address.",
                     IsRetryable = false,
                      HttpStatusCode = 422,
                      Severity = ErrorSeverity.Medium

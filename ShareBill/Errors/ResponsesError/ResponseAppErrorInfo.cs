@@ -13,7 +13,6 @@
             Code,
             Type,
             Description,
-            MessageToShow,
             IsRetryable,
             HttpStatusCode
         };

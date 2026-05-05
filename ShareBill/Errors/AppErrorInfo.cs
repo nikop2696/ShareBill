@@ -6,7 +6,6 @@ namespace ShareBill.Errors
     {
         public required string Code { get; set; }
         public required string Description { get; set; }
-        public string MessageToShow { get; set; } = string.Empty;
         public required ErrorType Type { get; set; }
         public required ErrorSeverity Severity { get; set; }
         public required bool IsRetryable { get; set; }

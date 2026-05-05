@@ -1,53 +1,28 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Supabase.Gotrue.Exceptions;
 
 namespace ShareBill.Errors.AuthErrors
 {
     public static class AuthErrorResolver
     {
-        public static AuthAppErrorInfo Resolve(string errorCode)
-        {
-            if (string.IsNullOrWhiteSpace(errorCode))
-            {
-                return Uknown();
-            }
-            if (SupabaseAuthErrors.ErrorMap.TryGetValue(errorCode, out var errorInfo))
-            {
-                return new AuthAppErrorInfo
-                {
-                    Code = errorInfo.Code,
-                    Description = errorInfo.Description,
-                    Type = errorInfo.Type,
-                    IsRetryable = errorInfo.IsRetryable,
-                    HttpStatusCode = errorInfo.HttpStatusCode,
-                    Severity = errorInfo.Severity
-                };
-            }
-            // Return a default error info for unknown errors
-            return Uknown();
-        }
+        public static AuthAppErrorInfo Resolve(string errorCode) 
+            => SupabaseAuthErrors.ErrorMap.TryGetValue(errorCode, out var errorInfo)
+            ? errorInfo
+            : Uknown();
+
         // Return a default error info for unknown errors
-        private static AuthAppErrorInfo Uknown() => new()
-        {
-            Code = "unknown_error",
-            Description = "An unknown authentication error occurred.",
-            Type = ErrorType.Unknown,
-            IsRetryable = false,
-            HttpStatusCode = 0,
-            Severity = ErrorSeverity.Medium
-        };
+        private static AuthAppErrorInfo Uknown() => AuthErrors.UnknownSignUpError;
+
         public static AuthAppErrorInfo FromException(Exception ex)
-        {
-            return new ()
+            => ex switch
             {
-                Code = "UnhandledException",
-                Description = $"An unhandled exception occurred. Ex: {ex.GetFullExceptionMessage()}",
-                Type = ErrorType.Unknown,
-                IsRetryable = false,
-                HttpStatusCode = 0,
-                Severity = ErrorSeverity.Medium
+                TimeoutException => AuthErrors.NetworkTimeOut,
+                HttpRequestException => AuthErrors.NetworkFailure,
+                GotrueException gex => Resolve(gex.Reason.ToString()),
+                _ => Uknown()
             };
 
 
-        }
+        
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Polly;
 using ShareBill.DTOs.Responses;
 using ShareBill.Errors;
+using ShareBill.Errors.ConnectionErrors;
 using ShareBill.Infrastructure.Database;
 using ShareBill.Infrastructure.Policies;
 
@@ -47,7 +48,7 @@ namespace ShareBill.Services
                 var(level, payload) = ex.ToLog();
                 _logger.Log(level, ex, "Database connection failed. {@Payload}", payload);
 
-                return OperationResult<bool>.Fail("Database connection failed");
+                return OperationResult<bool>.Fail(ConnectionErrors.UnReachableServer);
             }
 
             

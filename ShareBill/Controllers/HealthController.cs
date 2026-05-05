@@ -26,7 +26,7 @@ namespace ShareBill.Controllers
         {
             var isHealthy = await _healthService.CanReachDatabase();
 
-            if (!isHealthy)
+            if (!isHealthy.Data)
             {
                 return StatusCode(500);
             }

@@ -12,6 +12,7 @@ namespace ShareBill.DTOs.Responses
         public T? Data { get; init; }
         public string Message { get; init; } = string.Empty;
         public string ErrorCode { get; init; } = string.Empty;
+        public bool IsRetryable { get; init; }
 
         /// <summary>
         /// Creates a successful operation result containing the specified data and an optional message.
@@ -23,16 +24,7 @@ namespace ShareBill.DTOs.Responses
         public static OperationResult<T> Ok(T data, string message = "") =>
             new() { Success = true, Data = data, Message = message };
 
-        /// <summary>
-        /// Creates a failed operation result with the specified error message and optional error code.
-        /// </summary>
-        /// <param name="message">The error message that describes the reason for the failure. Cannot be null.</param>
-        /// <param name="errorCode">An optional error code that identifies the type of failure. If not specified, the error code is set to an
-        /// empty string.</param>
-        /// <returns>An instance of OperationResult<T> representing a failed operation, with Success set to false, and the
-        /// specified message and error code.</returns>
-        public static OperationResult<T> Fail(string message, string errorCode = "") =>
-            new() { Success = false, Message = message, ErrorCode = errorCode };
+            
         /// <summary>
         /// Creates a failed operation result with the specified exception information.
         /// </summary>
@@ -41,17 +33,7 @@ namespace ShareBill.DTOs.Responses
         /// <param name="ex">The exception that caused the operation to fail. Cannot be null.</param>
         /// <returns>An OperationResult<T> instance representing a failed operation, containing the extracted error code and a
         /// user-friendly error message.</returns>
-        public static OperationResult<T> Fail(Exception ex) 
-        {
-            var error = ex.ExtractErrorCode();
-
-            return new()
-            {
-                Success = false,
-                Message = string.IsNullOrWhiteSpace(error.MessageToShow) ? "An error occurred." : error.MessageToShow,
-                ErrorCode = error.Code,
-            };
-        }
+        public static OperationResult<T> Fail(Exception ex) => Fail(ex.ExtractErrorCode());
 
         /// <summary>
         /// Creates a failed operation result with the specified error information.
@@ -66,8 +48,8 @@ namespace ShareBill.DTOs.Responses
             new()
             {
                 Success = false,
-                Message = string.IsNullOrWhiteSpace(errorInfo.MessageToShow) ? "An error occurred." : errorInfo.MessageToShow,
                 ErrorCode = errorInfo.Code,
+                IsRetryable = errorInfo.IsRetryable
             };
 
     }

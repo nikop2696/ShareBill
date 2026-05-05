@@ -36,7 +36,7 @@ namespace ShareBill.Services
                 if (!isAvaiable)
                 { 
                     _logger.LogWarning("Username: {UserName} is already taken.", request.UserName);
-                    return OperationResult<SignUpResponse>.Fail("Username is already taken.", "UserAlreadyInUse");
+                    return OperationResult<SignUpResponse>.Fail(AuthErrors.UserAlreadyInUse);
                 }
 
                 var signUpResponse = await CreateAuthUserAsync(request.Email, request.Password);
@@ -47,7 +47,7 @@ namespace ShareBill.Services
                         "Failed to sign up user with email: {Email}. ErrorCode: {ErrorCode} - {Message}",
                         request.Email, signUpResponse.ErrorCode, signUpResponse.Message);
 
-                    return OperationResult<SignUpResponse>.Fail(signUpResponse.Message, signUpResponse.ErrorCode);
+                    return OperationResult<SignUpResponse>.Fail(AuthErrorResolver.Resolve(signUpResponse.ErrorCode));
                 }
 
                 var userId = signUpResponse.Data!.UserID;
@@ -63,7 +63,7 @@ namespace ShareBill.Services
                         "Failed to create user profile for user with email: {Email}. ErrorCode: {ErrorCode} - {Message}",
                         request.Email, usernameUpdateResponse.ErrorCode, usernameUpdateResponse.Message);
 
-                    return OperationResult<SignUpResponse>.Fail(usernameUpdateResponse.Message, usernameUpdateResponse.ErrorCode);
+                    return OperationResult<SignUpResponse>.Fail(AuthErrorResolver.Resolve(usernameUpdateResponse.ErrorCode));
                 }
                 return OperationResult<SignUpResponse>.Ok(new SignUpResponse(), "User signed up and profile created successfully.");
 
@@ -104,7 +104,7 @@ namespace ShareBill.Services
                     if (authSupaBaseResponse == null || authSupaBaseResponse.User == null || string.IsNullOrWhiteSpace(authSupaBaseResponse.User.Id))
                     {
                         _logger.LogError("Failed to sign up user with email: {Email}", email);
-                        return OperationResult<AuthResponse>.Fail("Failed to sign up user.");
+                        return OperationResult<AuthResponse>.Fail(AuthErrors.SupabaseInvalidSignUpResponse);
                     }
                     _logger.LogInformation("User signed up successfully with email: {Email}", email);
 
@@ -141,10 +141,20 @@ namespace ShareBill.Services
                     .Set(p => p.UserName!, userName)
                     .Update();
 
-                    if (userUpdatetResponse == null || userUpdatetResponse.Models.Count == 0)
+                    if (userUpdatetResponse == null)
                     {
                         _logger.LogError("Failed to update username for user with ID: {UserId}", userId);
-                        return OperationResult<UserResponse>.Fail("Failed to update username.");
+                        return OperationResult<UserResponse>.Fail(AuthErrors.SignUpProfileUpdateFailed);
+                    }
+                    if(userUpdatetResponse.Models.Count == 0)
+                    {
+                        _logger.LogError("No profile found for user with ID: {UserId} when updating username.", userId);
+                        return OperationResult<UserResponse>.Fail(AuthErrors.SignUpUsernameNotFound);
+                    }
+                    if (userUpdatetResponse.Models.Count > 1)
+                    {
+                        _logger.LogWarning("Multiple profiles found for user with ID: {UserId} when updating username. This should not happen.", userId);
+                        return OperationResult<UserResponse>.Fail(AuthErrors.MultipleUser);
                     }
 
                     return OperationResult<UserResponse>.Ok(new UserResponse { UserID = userId, UserName = userName }, "Username updated successfully.");
