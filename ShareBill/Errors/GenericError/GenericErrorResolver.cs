@@ -27,7 +27,7 @@ namespace ShareBill.Errors.GenericError
             {
                 Code = "unknown_error",
                 Description = ex.Message,
-                Type = ErrorType.Server,
+                Type = ErrorType.Unknown, 
                 IsRetryable = false,
                 Severity = ErrorSeverity.Medium,
             };

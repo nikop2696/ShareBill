@@ -2,7 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using ShareBill.DTOs.Requests;
-using ShareBill.DTOs.Responses;
+using ShareBill.DTOs.Responses.Operation;
 using ShareBill.Services;
 
 namespace ShareBill.Controllers
@@ -37,6 +37,7 @@ namespace ShareBill.Controllers
             }
 
             _logger.LogInformation("Validation succeeded for sign-up request with email: {Email}. Proceeding to register user.", request.Email);
+
             var result = await _signUpUserService.RegisterUserAsync(request);
             
             if (!result.Success)

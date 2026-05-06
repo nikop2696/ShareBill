@@ -1,5 +1,5 @@
 ﻿using Polly;
-using ShareBill.DTOs.Responses;
+using ShareBill.DTOs.Responses.Operation;
 using ShareBill.Errors;
 using ShareBill.Errors.ConnectionErrors;
 using ShareBill.Infrastructure.Database;

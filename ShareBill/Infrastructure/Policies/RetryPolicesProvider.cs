@@ -1,7 +1,7 @@
 ﻿using Npgsql;
 using Polly;
 using Polly.Retry;
-using ShareBill.DTOs.Responses;
+using ShareBill.DTOs.Responses.Operation;
 using ShareBill.Errors;
 using ShareBill.Errors.AuthErrors;
 using ShareBill.Errors.GenericError;

@@ -1,5 +1,5 @@
 ﻿using Polly;
-using ShareBill.DTOs.Responses;
+using ShareBill.DTOs.Responses.Operation;
 
 namespace ShareBill.Infrastructure.Policies
 {

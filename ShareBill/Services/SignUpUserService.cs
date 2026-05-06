@@ -2,7 +2,7 @@
 using Polly.Retry;
 using ShareBill.Domain.Entities;
 using ShareBill.DTOs.Requests;
-using ShareBill.DTOs.Responses;
+using ShareBill.DTOs.Responses.Operation;
 using ShareBill.Errors;
 using ShareBill.Errors.AuthErrors;
 using ShareBill.Infrastructure.Policies;

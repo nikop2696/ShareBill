@@ -3,7 +3,7 @@ using ShareBill.Errors;
 using ShareBill.Errors.ResponsesError;
 using ShareBill.Errors.GenericError;
 
-namespace ShareBill.DTOs.Responses
+namespace ShareBill.DTOs.Responses.Operation
 {
 
     public class OperationResult<T> 
@@ -50,7 +50,10 @@ namespace ShareBill.DTOs.Responses
                 Success = false,
                 ErrorCode = errorInfo.Code,
                 IsRetryable = errorInfo.IsRetryable,
-                Message = errorInfo.Description
+                // If the error type is unknown, we provide a generic message to avoid exposing internal details. For known error types, we use the provided description.
+                Message = errorInfo.Type == ErrorType.Unknown
+                    ? "An unexpected error occurred. Please try again later."
+                    : errorInfo.Description
             };
 
     }
