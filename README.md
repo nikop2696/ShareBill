@@ -8,7 +8,7 @@ A scalable expense sharing API built with **ASP.NET Core**, designed to help gro
 
 ShareBill provides the backend infrastructure to track shared costs and calculate who owes what. The core engine is designed to minimize the number of transactions needed to settle debts within a group. It is planned to be self hostable and scalable.
 
-## 🏗 Architecture & Approach
+### 🏗 Architecture & Approach
 
 The project focuses on performance and clean architecture:
 - **Data Access:** Uses **Dapper** and raw SQL.
