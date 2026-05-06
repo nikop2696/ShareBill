@@ -14,6 +14,7 @@ The project focuses on performance and clean architecture:
 - **Data Access:** Uses **Dapper** and raw SQL.
 - **Infrastructure:** Leverages **Supabase** to handle PostgreSQL database hosting and  Auth for secure user authentication.
 - **Debt Optimization:** Implements a greedy algorithm to calculate the most efficient way to settle balances, ensuring users make the fewest possible transfers to clear their debts.
+- **Project Structure (Modular Monolith):** ShareBill adopts a single-project Modular Monolith architecture following Clean Architecture principles with clear separation of concerns. The single deployable unit simplifies Dockerization, keeping development fast, simple, and easy to maintain.
 
 ---
 
@@ -46,7 +47,7 @@ This project is currently under active development.
 
 ## 📌 Main Goals
 
-- Backend architecture design (Clean / N-Tier architecture)
+- Backend architecture design (Modular Monolith applying Clean Architecture principles)
 - Database design (relational modeling)
 - REST API development with ASP.NET Core
 - Debt settlement optimization algorithm (greedy approach)
