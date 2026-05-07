@@ -26,7 +26,7 @@ Da creare:
 
 Possibile migrazione futura:
 
-- da monolith a services
+- da Layered a Modular
 - separazione auth/payments in servizi indipendenti
 
 Motivazioni:
