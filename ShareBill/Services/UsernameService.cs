@@ -15,7 +15,7 @@ namespace ShareBill.Services
         //TODO: When the user signUp the insert of the username can fail, even with retry, as it's a different table separeted from Auth.
         //To avoid this but allow the user to login and not be withouth an username
         //At the access we ask the user to set the username.
-        //The actual logIn wi
+        //It will be done by the client this is the service to check if the username is set or not.
         public async Task<bool> IsUsernameSet()
     }
 }
