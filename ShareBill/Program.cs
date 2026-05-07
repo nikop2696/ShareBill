@@ -12,6 +12,7 @@ using ShareBill.Infrastructure.Policies;
 using ShareBill.LoggerConfigurators;
 using ShareBill.Services;
 using FluentValidation;
+using ShareBill.Helpers;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,7 +48,12 @@ builder.Services.AddSingleton(ConfiguredLogger.BaseLogger());
 
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
+builder.AddJWT();
 
+
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddApiVersioning(options =>
 {
