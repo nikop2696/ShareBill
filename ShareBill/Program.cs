@@ -1,18 +1,10 @@
 using Asp.Versioning;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi;
-using Polly;
 using Scalar.AspNetCore;
 using Serilog;
-using Serilog.Core;
-using ShareBill.Configurators;
-using ShareBill.Infrastructure.Database;
-using ShareBill.Infrastructure.DI;
-using ShareBill.Infrastructure.Policies;
-using ShareBill.LoggerConfigurators;
-using ShareBill.Services;
-using FluentValidation;
-using ShareBill.Helpers;
+using ShareBill.Shared;
+using ShareBill.Shared.Infrastructure.Api;
+using ShareBill.Shared.Infrastructure.Devolopment;
+using ShareBill.Shared.Infrastructure.SupaBase;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,65 +15,34 @@ builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+//Add Api 
 
-//Swagger Configuration
-builder.Services.AddEndpointsApiExplorer();
+builder.AddApi();
 
+//Add Supabase
 
-// Supabase configuration
-builder.Services.Configure<SupabaseSettings>(
-    builder.Configuration.GetSection("Supabase"));
+builder.AddSupabase();
 
 
-builder.Services.AddSupabase();
+// Shared services
 
-builder.Services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
+builder.AddShared();
 
-builder.Services.AddScoped<HealthService>();
-
-builder.Services.AddScoped<SignUpUserService>();
-
-builder.Services.AddSingleton<IRetryPolicies, RetryPolicesProvider>();
-
-builder.Services.AddSingleton(ConfiguredLogger.BaseLogger());
-
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
-builder.AddJWT();
+//Add Modules
+builder.Services.AddModules();
 
 
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-
-builder.Services.AddApiVersioning(options =>
-{
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
-    options.ReportApiVersions = true;
-
-    options.ApiVersionReader = new UrlSegmentApiVersionReader();
-})
-    // Add API Explorer to support versioning in Swagger
-    .AddApiExplorer(options =>
-    {
-        options.GroupNameFormat = "'v'VVV";
-        options.SubstituteApiVersionInUrl = true;
-    });
 
 // Add API Explorer to support versioning in Swagger
+
 
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference();
-
-}
+app.ConfigureDevelopmentApp();
 
 app.UseHttpsRedirection();
 
