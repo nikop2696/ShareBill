@@ -9,24 +9,18 @@ using ShareBill.Shared.Infrastructure.SupaBase;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.UseSerilog();
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-//Add Api 
 
-builder.AddApi();
 
-//Add Supabase
-
-builder.AddSupabase();
 
 
 // Shared services
 
-builder.AddShared();
+builder.AddSharedToBuilder();
 
 //Add Modules
 builder.Services.AddModules();
@@ -42,12 +36,6 @@ builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.ConfigureDevelopmentApp();
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+app.AddSharedToApp();
 
 app.Run();
