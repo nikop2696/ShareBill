@@ -14,7 +14,7 @@ The project focuses on performance and clean architecture:
 - **Data Access:** Uses **Dapper** and raw SQL.
 - **Infrastructure:** Leverages **Supabase** to handle PostgreSQL database hosting and  Auth for secure user authentication.
 - **Debt Optimization:** Implements a greedy algorithm to calculate the most efficient way to settle balances, ensuring users make the fewest possible transfers to clear their debts.
-- **Project Structure (Modular Monolith):** ShareBill follows a layered monolith architecture inspired by Clean Architecture, with clear separation of concerns between domain, application, and infrastructure. The single deployable unit simplifies Dockerization, keeping development fast, simple, and easy to maintain, while allowing a future evolution toward a domain-based Modular Monolith as the system grows in complexity.
+- **Project Structure (Modular Monolith):** ShareBill has evolved from a layered monolith to a modular monolith. This transition was driven by the need for better separation of concerns and improved maintainability as the system grew. The modular approach preserves a single deployable unit, keeping Dockerization simple while enabling clearer domain boundaries.
 
 ---
 
