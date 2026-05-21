@@ -11,7 +11,7 @@ using Supabase.Gotrue.Exceptions;
 
 namespace ShareBill.Modules.Users.Application
 {
-    public class SignUpUserService
+    public class SignUpUserService : ISignUpUserService
     {
         private readonly Client _supaBaseService;
         private readonly ILogger<OperationResult<SignUpUserService>> _logger;

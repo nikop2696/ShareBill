@@ -79,6 +79,24 @@ namespace ShareBill.Shared.Errors.AuthErrors
             HttpStatusCode = 422,
             Description = "Multiple profiles found for user."
         };
+        public static AuthAppErrorInfo SignInFailed => new()
+        {
+            Code = "SignInFailed",
+            Type = ErrorType.Authentication,
+            Severity = ErrorSeverity.Low,
+            IsRetryable = false,
+            HttpStatusCode = 404,
+            Description = "Email or Password Invalid."
+        };
+        public static AuthAppErrorInfo DeserealizationFailed => new()
+        {
+            Code = "DeserealizationFailed",
+            Type = ErrorType.Server,
+            Severity = ErrorSeverity.High,
+            IsRetryable = false,
+            HttpStatusCode = 404,
+            Description = "The deserialization has failed"
+        };
 
     }
 }

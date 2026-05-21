@@ -16,7 +16,9 @@ namespace ShareBill.Modules.Users.Validators
                 .MinimumLength(8).WithMessage("Password must be at least 8 characters long.")
                 .Matches("[A-Z]").WithMessage("Password must contain at least one uppercase letter.")
                 .Matches("[a-z]").WithMessage("Password must contain at least one lowercase letter.")
-                .Matches("[0-9]").WithMessage("Password must contain at least one digit.");
+                .Matches("[0-9]").WithMessage("Password must contain at least one digit.")
+                .Matches(@"^[A-Za-z0-9!@#$%^&*(),.?"":{}|<>_\-]+$")
+                .WithMessage("Password contains invalid characters. Special allowed characters are: ! @ # $ % ^ & * ( ) , . ? : { } | < > _ -.");
 
             RuleFor(x => x.UserName)
                 .NotEmpty().WithMessage("Username is required.")

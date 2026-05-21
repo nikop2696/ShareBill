@@ -6,7 +6,7 @@ namespace ShareBill.Modules.Users
     {
         public static IServiceCollection AddUsersModule(this IServiceCollection services)
         {
-            services.AddScoped<SignUpUserService>();
+            services.AddScoped<ISignUpUserService, SignUpUserService>();
 
             return services;
         }

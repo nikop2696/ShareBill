@@ -12,11 +12,11 @@ namespace ShareBill.Modules.Users.Api
     [ApiVersion("1.0")]
     public class SignUpController : ControllerBase
     {
-        private readonly SignUpUserService _signUpUserService;
+        private readonly ISignUpUserService _signUpUserService;
         private readonly IValidator<UserRequests.UserSignUp> _validator;
         private readonly ILogger<SignUpController> _logger;
 
-        public SignUpController(SignUpUserService signUpUserService, IValidator<UserRequests.UserSignUp> validator, ILogger<SignUpController> logger)
+        public SignUpController(ISignUpUserService signUpUserService, IValidator<UserRequests.UserSignUp> validator, ILogger<SignUpController> logger)
         {
             _signUpUserService = signUpUserService;
             _validator = validator;
