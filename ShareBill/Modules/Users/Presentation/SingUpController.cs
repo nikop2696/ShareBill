@@ -5,7 +5,7 @@ using ShareBill.Modules.Users.Application;
 using ShareBill.Modules.Users.Domain.Request;
 using ShareBill.Shared.Models;
 
-namespace ShareBill.Modules.Users.Api
+namespace ShareBill.Modules.Users.Presentation
 {
     [ApiController]
     [Route("api/v{version:apiVersion}/[controller]")]

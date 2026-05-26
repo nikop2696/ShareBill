@@ -45,7 +45,7 @@ namespace ShareBill.Modules.Users.Domain.Entities
             public required Guid Id {  get; set; }
         }
 
-        internal sealed class UserTableResponse
+        internal sealed class UserDbModel
         {
             public string? username { get; set; }
             public bool is_active { get; set; }

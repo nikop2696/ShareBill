@@ -86,9 +86,9 @@ namespace ShareBill.Shared.Errors.AuthErrors
                      HttpStatusCode = 429,
                      Severity = ErrorSeverity.Medium
                  },
-                 ["UserAlreadyRegistred"] = new() 
+                 ["UserAlreadyRegistered"] = new() 
                  {
-                    Code = "UserAlreadyRegistred",
+                    Code = "UserAlreadyRegistered",
                     Type = ErrorType.Validation,
                     Description = "The user is already registered.",
                     IsRetryable = false,

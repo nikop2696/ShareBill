@@ -13,6 +13,15 @@ namespace ShareBill.Shared.Errors.AuthErrors
             HttpStatusCode = 409,
             Severity = ErrorSeverity.Medium
         };
+        public static AuthAppErrorInfo Useralreadyregistered => new()
+        {
+            Code = "Useralreadyregistered",
+            Type = ErrorType.Validation,
+            Description = "The used email is already registered.",
+            IsRetryable = false,
+            HttpStatusCode = 409,
+            Severity = ErrorSeverity.Medium
+        };
 
         public static AuthAppErrorInfo SupabaseInvalidSignUpResponse => new()
         {

@@ -1,7 +1,7 @@
 ﻿using ShareBill.Modules.Health.Application;
 using ShareBill.Shared.Infrastructure.Database;
 
-namespace ShareBill.Modules.Users.Application
+namespace ShareBill.Modules.Users.Infrastructure
 {
     public class UsernameService
     {

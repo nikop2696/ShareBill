@@ -1,4 +1,5 @@
 ﻿using ShareBill.Modules.Users.Application;
+using ShareBill.Modules.Users.Infrastructure;
 
 namespace ShareBill.Modules.Users
 {

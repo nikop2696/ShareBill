@@ -9,7 +9,7 @@ using ShareBill.Shared.Models;
 using Supabase;
 using System.Security.Cryptography;
 
-namespace ShareBill.Modules.Users.Application
+namespace ShareBill.Modules.Users.Infrastructure
 {
     public class UserSignInService
     {
@@ -51,6 +51,25 @@ namespace ShareBill.Modules.Users.Application
                 // Map to public response DTO. If OperationResult has a different success factory, adjust accordingly.
                 Guid Id = user.User.Id;
 
+                var usernameInfoResult = await GetUsernameInfo(Id);
+
+                if (usernameInfoResult == null || !usernameInfoResult.Success || usernameInfoResult.Data == null)
+                {
+                    _logger.LogWarning("Impossible to Login - username info not found");
+                    return OperationResult<UsersResponse.LoginResponse>.Fail(AuthErrors.SignUpUsernameNotFound);
+                }
+
+                UsersResponse.LoginResponse loginResponse = new UsersResponse.LoginResponse()
+                {
+                    AccessToken = user.AccessToken,
+                    RefreshToken = user.RefreshToken,
+                    UserInfo = usernameInfoResult.Data,
+                    ExpiresIn = user.ExpiresIn,
+                    TokenType = user.TokenType,
+                };
+
+                return OperationResult<UsersResponse.LoginResponse>.Ok(loginResponse);
+
 
 
 
@@ -69,7 +88,7 @@ namespace ShareBill.Modules.Users.Application
 
             await connection.OpenAsync();
 
-            var result = connection.QuerySingleOrDefault<UsersResponse.UserTableResponse>(
+            var result = connection.QuerySingleOrDefault<UsersResponse.UserDbModel>(
                 UsernameSql,
                 new { UserId = userId });
             if(result == null)

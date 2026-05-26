@@ -1,5 +1,6 @@
 ﻿using Polly;
 using Polly.Retry;
+using ShareBill.Modules.Users.Application;
 using ShareBill.Modules.Users.Domain;
 using ShareBill.Modules.Users.Domain.Request;
 using ShareBill.Shared.Errors;
@@ -9,7 +10,7 @@ using ShareBill.Shared.Models;
 using Supabase;
 using Supabase.Gotrue.Exceptions;
 
-namespace ShareBill.Modules.Users.Application
+namespace ShareBill.Modules.Users.Infrastructure
 {
     public class SignUpUserService : ISignUpUserService
     {
@@ -101,11 +102,14 @@ namespace ShareBill.Modules.Users.Application
                 {
                     var authSupaBaseResponse = await _supaBaseService.Auth.SignUp(email, password);
 
+
                     if (authSupaBaseResponse == null || authSupaBaseResponse.User == null || string.IsNullOrWhiteSpace(authSupaBaseResponse.User.Id))
                     {
                         _logger.LogError("Failed to sign up user with email: {Email}", email);
                         return OperationResult<AuthResponse>.Fail(AuthErrors.SupabaseInvalidSignUpResponse);
                     }
+
+                    
                     _logger.LogInformation("User signed up successfully with email: {Email}", email);
 
                     return OperationResult<AuthResponse>.Ok(new AuthResponse { UserID = Guid.Parse(authSupaBaseResponse.User.Id)}, "User signUp successfully");
@@ -171,6 +175,7 @@ namespace ShareBill.Modules.Users.Application
 
 
         }
+
 
     }
 }
