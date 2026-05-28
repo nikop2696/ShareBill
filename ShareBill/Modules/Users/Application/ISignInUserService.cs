@@ -6,6 +6,6 @@ namespace ShareBill.Modules.Users.Application
 {
     public interface ISignInUserService
     {
-        Task<OperationResult<UsersResponse.LoginResponse>> LoginAsync(LoginRequest request);
+        Task<OperationResult<UsersResponse.LoginResponse>> SignInUserAsync(LoginRequest.Login request);
     }
 }

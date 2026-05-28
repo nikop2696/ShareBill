@@ -3,9 +3,9 @@ using ShareBill.Modules.Users.Domain.Request;
 
 namespace ShareBill.Modules.Users.Validators
 {
-    public class UserSignUpRequestValidator : AbstractValidator<UserRequests.UserSignUp>
+    public class UserRequestValidator : AbstractValidator<UserRequests.UserSignUp>
     {
-        public UserSignUpRequestValidator()
+        public UserRequestValidator()
         {
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required.")
@@ -25,6 +25,18 @@ namespace ShareBill.Modules.Users.Validators
                 .MinimumLength(7).WithMessage("Username must be at least 7 characters long.")
                 .MaximumLength(20).WithMessage("Username must be no more than 20 characters long.")
                 .Matches("^[a-zA-Z0-9_]+$").WithMessage("Username can only contain letters, numbers, and underscores.");
+        }
+    }
+    public class LoginRequestValidator : AbstractValidator<LoginRequest.Login>
+    {
+        public LoginRequestValidator()
+        {
+            RuleFor(x => x.Email)
+                .NotEmpty().WithMessage("Email is required.")
+                .EmailAddress().WithMessage("Invalid email format.");
+            
+            RuleFor(x => x.Password)
+                .NotEmpty().WithMessage("Password is required.");
         }
     }
 }
