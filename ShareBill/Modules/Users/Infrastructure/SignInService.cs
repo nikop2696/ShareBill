@@ -27,6 +27,17 @@ namespace ShareBill.Modules.Users.Infrastructure
             _retryPolicies = retryPolicies;
         }
 
+
+        /// <summary>
+        /// Attempts to sign in a user with the specified login credentials asynchronously.
+        /// </summary>
+        /// <remarks>Returns a failure result if the email or password is missing, if authentication
+        /// fails, or if the user's username information cannot be found. Exceptions during the operation are captured
+        /// and returned as failure results.</remarks>
+        /// <param name="request">The login request containing the user's email and password. The email and password must not be null or
+        /// empty.</param>
+        /// <returns>An OperationResult containing the login response if the sign-in is successful; otherwise, an OperationResult
+        /// indicating the failure reason.</returns>
         public async Task<OperationResult<UsersResponse.LoginResponse>> SignInUserAsync(LoginRequest.Login request)
         {
             try
@@ -60,7 +71,7 @@ namespace ShareBill.Modules.Users.Infrastructure
                     return OperationResult<UsersResponse.LoginResponse>.Fail(AuthErrors.SignUpUsernameNotFound);
                 }
 
-                UsersResponse.LoginResponse user = new UsersResponse.LoginResponse
+                UsersResponse.LoginResponse user = new()
                 {
                     Id = Id,
                     Email = authSupaBaseResponse.User.Email!,
@@ -88,6 +99,12 @@ namespace ShareBill.Modules.Users.Infrastructure
         }
 
 
+        /// <summary>
+        /// Retrieves user information associated with the specified user identifier.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user whose information is to be retrieved.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains an OperationResult with the
+        /// user's information if found; otherwise, a failure result indicating that the username was not found.</returns>
         private async Task<OperationResult<UsersResponse.UserValue>> GetUsernameInfo(Guid userId)
         {
             await using var connection = _dbFactory.CreateConnection();
@@ -109,6 +126,17 @@ namespace ShareBill.Modules.Users.Infrastructure
 
         }
 
+        /// <summary>
+        /// Validates a Supabase authentication response and determines whether it contains all required information for
+        /// a successful login.
+        /// </summary>
+        /// <remarks>If the response is invalid, this method logs a warning and sets the out parameter to
+        /// a failed operation result with the appropriate error. A valid response must include a non-null user,
+        /// non-empty user ID, access token, refresh token, token type, and a positive expiration value.</remarks>
+        /// <param name="authSupaBaseResponse">The Supabase authentication session response to validate. May be null.</param>
+        /// <param name="loginResponse">When this method returns, contains an operation result indicating the failure reason if the response is
+        /// invalid; otherwise, null.</param>
+        /// <returns>true if the response is valid and contains all required authentication data; otherwise, false.</returns>
         private bool IsValidSupabaseResponse(Supabase.Gotrue.Session? authSupaBaseResponse, out OperationResult<UsersResponse.LoginResponse>? loginResponse)
         {
             loginResponse = null;
@@ -158,6 +186,7 @@ namespace ShareBill.Modules.Users.Infrastructure
             return true;
         }
 
+        
         private const string UsernameSql = @"SELECT username, is_active, profile_completed
                                                 FROM public.users
                                                 WHERE id = @UserId";

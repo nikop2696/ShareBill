@@ -3,6 +3,10 @@ using ShareBill.Modules.Users.Domain.Request;
 
 namespace ShareBill.Modules.Users.Validators
 {
+    /// <summary>
+    /// Validator for user sign-up requests.
+    /// Ensures that the email, password, and username meet the required criteria.
+    /// </summary>
     public class UserRequestValidator : AbstractValidator<UserRequests.UserSignUp>
     {
         public UserRequestValidator()
@@ -27,6 +31,12 @@ namespace ShareBill.Modules.Users.Validators
                 .Matches("^[a-zA-Z0-9_]+$").WithMessage("Username can only contain letters, numbers, and underscores.");
         }
     }
+
+    /// <summary>
+    /// Provides validation rules for login requests, ensuring that required fields are present and correctly formatted.
+    /// </summary>
+    /// <remarks>This validator checks that the email is not empty and is in a valid email format, and that
+    /// the password is not empty. Use this class to validate user input before processing login attempts.</remarks>
     public class LoginRequestValidator : AbstractValidator<LoginRequest.Login>
     {
         public LoginRequestValidator()

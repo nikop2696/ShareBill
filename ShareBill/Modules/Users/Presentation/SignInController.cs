@@ -24,6 +24,15 @@ namespace ShareBill.Modules.Users.Presentation
             _validator = validator;
         }
 
+
+        /// <summary>
+        /// Authenticates a user based on the provided login credentials and returns the result of the sign-in attempt.
+        /// </summary>
+        /// <remarks>Returns HTTP 400 Bad Request if validation fails or authentication is unsuccessful.
+        /// Returns HTTP 200 OK with user information if sign-in is successful.</remarks>
+        /// <param name="request">The login credentials submitted by the user. Must include valid email and password values. Cannot be null.</param>
+        /// <returns>An IActionResult containing an OperationResult with the outcome of the sign-in attempt. Returns a success
+        /// response with user data if authentication succeeds; otherwise, returns a bad request with error details.</returns>
         [HttpPost]
         public async Task<IActionResult> SignIn([FromBody] LoginRequest.Login request)
         {
